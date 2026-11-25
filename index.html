@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windows 亮度自查指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F7F7F4;
+  --surface:#FFFFFF;
+  --fg:#16171A;
+  --muted:#5C6067;
+  --line:#E2E2DB;
+  --line-strong:#CFCFC6;
+  --accent:#8A5300;
+  --accent-bright:#B8730A;
+  --accent-soft:#F2E7D5;
+  --code-bg:#EFEFE9;
+  --ok:#2E6A41;
+  --bad:#A3341F;
+  --font-display:"Space Grotesk", "IBM Plex Sans", "Microsoft YaHei", sans-serif;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111214;
+    --surface:#191B1E;
+    --fg:#E9E7E2;
+    --muted:#9B9C98;
+    --line:#2A2D31;
+    --line-strong:#3A3E44;
+    --accent:#E3A54E;
+    --accent-bright:#F0C07A;
+    --accent-soft:#241C10;
+    --code-bg:#1D2023;
+    --ok:#7BC492;
+    --bad:#E88A72;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111214;
+  --surface:#191B1E;
+  --fg:#E9E7E2;
+  --muted:#9B9C98;
+  --line:#2A2D31;
+  --line-strong:#3A3E44;
+  --accent:#E3A54E;
+  --accent-bright:#F0C07A;
+  --accent-soft:#241C10;
+  --code-bg:#1D2023;
+  --ok:#7BC492;
+  --bad:#E88A72;
+  color-scheme: dark;
+}
+
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+
+.page{ max-width:47rem; margin:0 auto; padding-block:3.25rem 6rem; }
+.page > *{ min-width:0; }
+
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:0 0 1.1rem;
+}
+h1{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:clamp(1.9rem, 5.2vw, 2.8rem);
+  line-height:1.18;
+  letter-spacing:-.02em;
+  text-wrap:balance;
+  margin:0 0 1.1rem;
+}
+.lede{
+  font-size:1.06rem;
+  color:var(--muted);
+  max-width:38rem;
+  margin:0 0 2.2rem;
+}
+
+h2{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:1.45rem;
+  letter-spacing:-.01em;
+  margin:3.4rem 0 1rem;
+  padding-top:1.6rem;
+  border-top:1px solid var(--line);
+  text-wrap:balance;
+}
+h2:first-of-type{ border-top:none; padding-top:0; }
+h3{
+  font-weight:600;
+  font-size:1.02rem;
+  margin:1.8rem 0 .5rem;
+}
+p{ margin:0 0 1rem; }
+ul, ol{ margin:0 0 1.1rem; padding-left:1.35rem; }
+li{ margin:.3rem 0; }
+li::marker{ color:var(--accent); }
+
+code{
+  font-family:var(--font-mono);
+  font-size:.84em;
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:.06em .34em;
+  overflow-wrap:anywhere;
+}
+pre{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:.95rem 1.05rem;
+  overflow-x:auto;
+  margin:0 0 1.2rem;
+  font-size:.8rem;
+  line-height:1.62;
+}
+pre code{ background:none; border:none; padding:0; font-size:1em; white-space:pre; }
+
+.badge{
+  display:inline-block;
+  font-family:var(--font-mono);
+  font-size:.66rem;
+  letter-spacing:.08em;
+  padding:.14rem .5rem;
+  border-radius:999px;
+  border:1px solid currentColor;
+  vertical-align:.12em;
+  white-space:nowrap;
+}
+.badge.read{ color:var(--ok); }
+.badge.change{ color:var(--accent); }
+.badge.install{ color:var(--bad); }
+
+.happen{
+  border-left:2px solid var(--accent);
+  background:var(--surface);
+  border-radius:0 8px 8px 0;
+  padding:.75rem 1rem;
+  margin:.2rem 0 1.2rem;
+  font-size:.9rem;
+}
+.happen strong{ color:var(--accent); font-weight:600; }
+
+.branches{
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+  margin:0 0 1.4rem;
+}
+.branch{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+  gap:.8rem;
+  padding:.7rem .95rem;
+  border-bottom:1px solid var(--line);
+  font-size:.88rem;
+  background:var(--surface);
+}
+.branch:last-child{ border-bottom:none; }
+.branch .cond{ color:var(--muted); }
+.branch .res{ font-weight:500; }
+.branch.hit .res{ color:var(--accent); }
+
+.verdict{
+  background:var(--accent-soft);
+  border-left:3px solid var(--accent);
+  border-radius:0 10px 10px 0;
+  padding:1.15rem 1.3rem;
+  margin:0 0 2.6rem;
+}
+.verdict p{ margin:0; font-size:.97rem; }
+.verdict strong{ color:var(--accent); }
+
+.step{
+  display:grid;
+  grid-template-columns:2.1rem minmax(0,1fr);
+  gap:.9rem;
+  margin:0 0 2.2rem;
+}
+.step-num{
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  color:var(--accent);
+  padding-top:.15rem;
+  letter-spacing:.05em;
+}
+.step-body{ min-width:0; }
+.step-body h3{ margin-top:0; }
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:.86rem;
+  margin:0 0 1.3rem;
+}
+th, td{
+  text-align:left;
+  padding:.55rem .7rem;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+th{
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:500;
+}
+.table-wrap{ overflow-x:auto; margin:0 0 1.3rem; }
+.table-wrap table{ margin:0; min-width:30rem; }
+
+.en{
+  margin-top:4rem;
+  padding-top:1.6rem;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:.88rem;
+}
+.en h2{ border-top:none; padding-top:0; margin-top:0; font-size:1.1rem; color:var(--fg); }
+
+footer{
+  margin-top:4rem;
+  padding-top:1.2rem;
+  border-top:1px solid var(--line);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  letter-spacing:.06em;
+  color:var(--muted);
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem 1.4rem;
+}
+
+a{ color:var(--accent); text-underline-offset:.18em; }
+a:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+
+@media (max-width:560px){
+  .page{ padding-block:2.4rem 4rem; }
+  h2{ font-size:1.3rem; margin-top:2.8rem; }
+  pre{ font-size:.74rem; }
+  .step{ grid-template-columns:1.7rem minmax(0,1fr); gap:.65rem; }
+  .branch{ grid-template-columns:1fr; gap:.15rem; }
+}
+</style>
+</head>
+<body>
+
+<main class="page">
+
+  <p class="eyebrow">排查指南 · Windows 11</p>
+  <h1>亮度调不了？按这个顺序自查</h1>
+  <p class="lede">滑块能拖、屏幕不动、Fn 键失效，但设备管理器一切正常。不绑定机型，每一步都写明命令会做什么、执行后会发生什么。</p>
+
+  <div class="verdict">
+    <p><strong>先看结论：</strong>同样是「屏幕没反应」，值写没写进驱动，后面的方向完全相反。第一步先把这两件事分开，能省掉一大半排查。</p>
+  </div>
+
+  <h2>先确认你属于这种情况</h2>
+  <ul>
+    <li>设置 → 系统 → 显示 里的亮度滑块<strong>能拖动</strong></li>
+    <li>拖动时屏幕亮度<strong>没有任何变化</strong></li>
+    <li>设备管理器里显卡显示「工作正常」，没有黄色感叹号</li>
+  </ul>
+  <p>三条都符合再往下看。不符合的话直接跳到<a href="#fallback">还是不行？</a>。</p>
+
+  <h2>命令标记</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>标记</th><th>含义</th><th>能否撤销</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge read">只读</span></td><td>只查询，不改任何设置</td><td>不需要</td></tr>
+        <tr><td><span class="badge change">会改亮度</span></td><td>会立刻改变当前屏幕亮度</td><td>用同样命令设回去</td></tr>
+        <tr><td><span class="badge install">会装驱动</span></td><td>安装一个驱动包，需要管理员</td><td>可用 pnputil 卸载</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>跑「会改亮度」的命令之前，先记住当前亮度，后面好设回去。</p>
+
+  <h2>第 1 步：亮度接口存不存在</h2>
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <p><span class="badge read">只读</span></p>
+      <pre><code>Get-CimInstance -Namespace root/wmi -ClassName WmiMonitorBrightness</code></pre>
+      <div class="happen"><strong>执行后会发生什么：</strong>只读取信息，不改变任何东西。</div>
+      <p>预期输出类似：</p>
+      <pre><code>Active            : True
+CurrentBrightness : 60
+InstanceName      : DISPLAY\XXX0000\...
+Levels            : 101</code></pre>
+      <div class="branches">
+        <div class="branch"><span class="cond">有输出，Levels 约 101</span><span class="res">接口正常 → 第 2 步</span></div>
+        <div class="branch hit"><span class="cond">报错或没有输出</span><span class="res">驱动没暴露接口 → 看「接口都不存在」</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>第 2 步：写一次，看值有没有到驱动</h2>
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <p><span class="badge change">会改亮度</span></p>
+      <pre><code>$m = Get-CimInstance -Namespace root/wmi -ClassName WmiMonitorBrightnessMethods
+Invoke-CimMethod -InputObject $m -MethodName WmiSetBrightness `
+  -Arguments @{Timeout=1; Brightness=20}</code></pre>
+      <div class="happen"><strong>执行后会发生什么：</strong>屏幕亮度立刻变成 20%（如果一切正常）。不重启，不改注册表，不改电源方案。</div>
+      <p>读回来验证：</p>
+      <pre><code>(Get-CimInstance -Namespace root/wmi -ClassName WmiMonitorBrightness).CurrentBrightness</code></pre>
+      <div class="branches">
+        <div class="branch"><span class="cond">读回 20，屏幕也变暗了</span><span class="res">亮度控制是好的 → 问题在别处</span></div>
+        <div class="branch hit"><span class="cond">读回 20，屏幕没变</span><span class="res">值到了驱动，没到面板 → 第 3 步</span></div>
+        <div class="branch"><span class="cond">读回还是原来的值</span><span class="res">值没写进去 → 查权限和驱动状态</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>第 3 步：确认控制的是不是内置屏</h2>
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <p><span class="badge read">只读</span></p>
+      <pre><code>(Get-CimInstance -Namespace root/wmi -ClassName WmiMonitorBrightness).InstanceName
+Get-PnpDevice -Class Monitor | Select-Object Status, FriendlyName</code></pre>
+      <div class="happen"><strong>执行后会发生什么：</strong>只列出信息。多屏的用户先拔掉外接屏，再回到第 2 步重试。</div>
+      <p>Windows 的亮度滑块绑定在显示路径上。如果它控制的是不支持 DDC/CI 的外接屏，表现和本文一模一样。这一步必须先排除。</p>
+    </div>
+  </div>
+
+  <h2>第 4 步：OEM 扩展驱动还在不在</h2>
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-body">
+      <p><span class="badge read">只读</span></p>
+      <pre><code>pnputil /enum-drivers</code></pre>
+      <div class="happen"><strong>执行后会发生什么：</strong>列出所有已安装的驱动包，不修改任何东西。</div>
+      <p>输出很长，重点找 <code>Class Name: Extension</code>、Provider 是显卡厂商的那几条。Intel 的扩展包通常叫 <code>iigd_ext.inf</code>，发布名是 <code>oemNN.inf</code>。</p>
+      <div class="branches">
+        <div class="branch hit"><span class="cond">找不到 Intel 的 Extension 包</span><span class="res">扩展缺失，很可能就是它 → 第 5 步</span></div>
+        <div class="branch"><span class="cond">有 Extension 包</span><span class="res">可能不是这个原因 → 看「还是不行？」</span></div>
+        <div class="branch"><span class="cond">不确定</span><span class="res">用第 5 步反查更准</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>第 5 步：Windows Update 里有没有可装的扩展</h2>
+  <div class="step">
+    <div class="step-num">05</div>
+    <div class="step-body">
+      <p><span class="badge read">只读</span></p>
+      <pre><code>$session  = New-Object -ComObject Microsoft.Update.Session
+$searcher = $session.CreateUpdateSearcher()
+$result   = $searcher.Search("IsInstalled=0 and Type='Driver'")
+foreach ($u in $result.Updates) {
+    "[{0}] {1}" -f $u.DriverClass, $u.Title
+    "    HWID: {0}" -f $u.DriverHardwareID
+}</code></pre>
+      <div class="happen"><strong>执行后会发生什么：</strong>只查询可用的驱动更新，不下载，不安装。</div>
+      <p>再拿到显卡的硬件 ID，用来对号：</p>
+      <pre><code>Get-CimInstance Win32_VideoController | Select-Object Name, PNPDeviceID</code></pre>
+      <p>找 <code>[Extension]</code> 开头、并且 <code>HWID</code> 是显卡 <code>PNPDeviceID</code> 前缀的那一条（忽略大小写）。找到就进第 6 步。</p>
+    </div>
+  </div>
+
+  <h2>第 6 步：装回来</h2>
+  <div class="step">
+    <div class="step-num">06</div>
+    <div class="step-body">
+      <p><span class="badge install">会装驱动</span></p>
+      <p>图形界面：设置 → Windows 更新 → 高级选项 → 可选更新 → 驱动程序更新 → 勾选那条 Extension → 安装。</p>
+      <p>命令行（管理员 PowerShell）：</p>
+      <pre><code>powershell -ExecutionPolicy Bypass -File .\scripts\fix-install-extension.ps1</code></pre>
+      <div class="happen"><strong>执行后会发生什么：</strong>从 Windows Update 下载那个驱动包并安装，可能提示重启。脚本会先把找到的包名、类别、硬件 ID 打印出来，输入 Y 才会继续。</div>
+      <p>装完回到第 2 步验证。如果要撤销：</p>
+      <pre><code>pnputil /enum-drivers | Select-String -Pattern 'iigd_ext' -Context 0,6
+pnputil /delete-driver oemNN.inf /uninstall</code></pre>
+      <p>把 <code>oemNN.inf</code> 换成查到的发布名。</p>
+    </div>
+  </div>
+
+  <h2>原理</h2>
+  <p>显卡驱动的安装包在升级主驱动时，会清理同一设备上的旧驱动包。OEM 提供的 Extension 扩展驱动和主驱动类 GUID 不同，但共用同一个 <code>oemNN.inf</code> 槽位。主驱动占了槽位，扩展被一起删掉，而新驱动不会主动装回来。</p>
+  <p>主驱动是通用版本：能识别面板，能接受亮度数值，但不包含 OEM 针对具体面板写的背光适配参数。于是出现这种状态：</p>
+  <pre><code>拖动滑块 → Windows 写入亮度值 → 显卡驱动接受并记录 → 值停在这里，没送到面板</code></pre>
+  <p>Fn 快捷键走同一条底层路径，所以一起失效。设备管理器看不出问题，因为驱动本身没坏，缺的是一块配套的拼图。</p>
+
+  <h2 id="fallback">还是不行？</h2>
+  <h3>接口都不存在</h3>
+  <p>第 1 步没有输出，说明显卡驱动没暴露亮度接口。</p>
+  <ol>
+    <li>设备管理器 → 显示适配器，看是不是「Microsoft 基本显示适配器」。是的话驱动根本没装上。</li>
+    <li>重装厂商官网的显卡驱动，不要用第三方驱动工具。</li>
+    <li>装完重启，再跑第 1 步。</li>
+  </ol>
+
+  <h3>值写不进去</h3>
+  <p>第 2 步读回的值没变。检查当前 PowerShell 是否以正常用户运行，是否有组策略或管理软件限制了显示设置，或者重启后重试。</p>
+
+  <h3>值写进去了，屏幕也不动，但不是扩展驱动</h3>
+  <ul>
+    <li><strong>自适应亮度</strong>：设置 → 系统 → 显示，关掉「当光线变化时自动更改亮度」。</li>
+    <li><strong>内容自适应亮度</strong>：部分 Intel 机器在电池模式下会按画面内容调亮度，让手动调节看起来没效果。注册表 <code>HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers</code> 下的 <code>CABCOption</code> 改成 <code>0</code> 可关闭。</li>
+    <li><strong>厂商电源管理软件</strong>：某些管家类软件会接管亮度，退出后再试。</li>
+    <li><strong>驱动版本本身有问题</strong>：退回上一版，或装厂商官网的 OEM 版。</li>
+    <li><strong>屏幕硬件问题</strong>：外接显示器正常、内置屏在任何系统下都不能调，考虑排线或背光故障。</li>
+  </ul>
+
+  <h3>外接显示器不能调</h3>
+  <p>这是正常的。Windows 只能通过 DDC/CI 控制支持该协议的外接屏，很多显示器不支持，或者需要在显示器菜单里手动开启。</p>
+
+  <h2>仓库里的脚本</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>脚本</th><th>作用</th><th>改动系统</th></tr></thead>
+      <tbody>
+        <tr><td><code>diagnose-brightness.ps1</code></td><td>一次打印 7 项检查</td><td><span class="badge read">只读</span></td></tr>
+        <tr><td><code>verify-brightness.ps1</code></td><td>90→10→60 扫描，结束恢复原值</td><td><span class="badge change">会改亮度</span></td></tr>
+        <tr><td><code>fix-install-extension.ps1</code></td><td>按硬件 ID 匹配并安装扩展</td><td><span class="badge install">会装驱动</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>适用范围</h2>
+  <ul>
+    <li>在 Windows 11 + Intel 核显的笔记本上验证过</li>
+    <li>AMD、NVIDIA 平台原理类似，但命令和注册表位置不同，不要直接套用</li>
+    <li>安装扩展驱动属于系统级改动，建议先创建还原点</li>
+  </ul>
+
+  <section class="en">
+    <h2>English Summary</h2>
+    <p><strong>Symptom.</strong> The Windows 11 brightness slider moves but the screen never changes; Fn brightness keys fail too.</p>
+    <p><strong>How to locate it.</strong> Write a brightness value through <code>WmiSetBrightness</code>, read it back, and compare with what the screen does. If the value changes but the panel does not, the fault sits between the driver and the panel. Then check whether an OEM Extension driver is installed and whether Windows Update offers a matching one.</p>
+    <p><strong>Fix.</strong> Reinstall that Extension driver from Windows Update → Advanced options → Optional updates → Driver updates.</p>
+  </section>
+
+  <footer>
+    <span>Windows 11 · Intel graphics</span>
+    <span>MIT License</span>
+  </footer>
+
+</main>
+
+</body>
+</html>
